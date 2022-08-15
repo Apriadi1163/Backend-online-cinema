@@ -1,7 +1,15 @@
 const { film, user, category, filmCategory } = require("../../models")
 
+const cloudinary = require('../utils/cloudinary');
+
 exports.addFilm = async (req, res) => {
     try{
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'Upload',
+            use_filename: true,
+            unique_filename: false,
+          });
+
         let { categoryId } = req.body;
 
         if (categoryId) {
@@ -12,7 +20,7 @@ exports.addFilm = async (req, res) => {
             title: req.body.title,
             desc: req.body.desc,
             price: req.body.price,
-            image: req.file.filename,
+            image: result.public_id,
             attache: req.body.attache,
             idUser: req.user.id,
         };
